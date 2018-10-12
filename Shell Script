@@ -1,0 +1,47 @@
+#!/bin/sh
+
+export DEBIAN_FRONTEND="noninteractive"
+sudo apt -y install build-essential
+sudo apt-get update
+sudo ufw status
+sudo ufw allow 443/tcp
+sudo ufw allow 80/tcp
+sudo ufw allow 8080/tcp
+sudo ufw allow 22/tcp
+sudo ufw allow 3001/tcp
+sudo ufw allow 3002/tcp
+sudo ufw allow 3003/tcp
+sudo ufw allow 3004/tcp
+sudo ufw allow 3005/tcp
+sudo ufw allow 3006/tcp
+echo "y" | sudo ufw enable
+sudo apt-get -y install nodejs
+sudo apt-get -y install npm
+sudo apt-get -y install apache2
+sudo apt-get -y install build-essential
+sudo wget https://repo.mysql.com//mysql-apt-config_0.8.10-1_all.deb
+sudo dpkg -i mysql-apt-config_0.8.10-1_all.deb
+sudo apt-get update
+sudo apt-get -y install debconf-utils
+echo "mysql-server mysql-server/root_password password root" | sudo debconf-set-selections
+echo "mysql-server mysql-server/root_password_again password root" | sudo debconf-set-selections
+sudo apt-get -y install mysql-server
+sudo mysql_secure_installation -y
+sudo apt-get -y install php7.2 libapache2-mod-php7.2 php7.2-mbstring php7.2-json php7.2-common php-redis php-tokenizer php7.2-xml php-gettext php7.2-mysql php7.2-curl $
+php -m
+sudo apt-get -y install libapache2-mod-php7.2
+sudo apt-get -y install  php-fpm
+sudo apt-get -y install  phpmyadmin
+sudo apt-get update
+sudo touch /home/azureuser/hello.js
+echo "#!/usr/bin/node
+var http = require('http');
+http.createServer(function (req, res) {
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.end('Hello World');
+}).listen(8080, 'localhost');
+console.log('Server running at http://localhost:8080/');" >> /home/azureuser/hello.js
+sudo chmod +x /home/azureuser/hello.js
+sudo npm -y install -g pm2
+sudo pm2  start /home/azureuser/hello.js
+
